@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reading Helper - PDF Read Aloud</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header>
+        <h1>PDF Read Aloud with Follow-Along Highlighting</h1>
+        <p id="statusLabel">Upload a PDF to begin.</p>
+      </header>
+
+      <section class="controls">
+        <label class="upload-btn">
+          Upload PDF
+          <input type="file" id="pdfInput" accept="application/pdf" />
+        </label>
+        <button id="playBtn">Play</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="resumeBtn">Resume</button>
+        <button id="stopBtn">Stop</button>
+        <button id="prevSentenceBtn">Previous sentence</button>
+        <button id="nextSentenceBtn">Next sentence</button>
+
+        <label>
+          Speed
+          <input id="speedRange" type="range" min="0.65" max="1.75" step="0.05" value="1.0" />
+          <span id="speedValue">1.00x</span>
+        </label>
+
+        <label>
+          <input type="checkbox" id="wordHighlightToggle" checked />
+          Word highlight
+        </label>
+
+        <button id="darkModeBtn">Toggle dark mode</button>
+        <button id="exportTextBtn">Export text</button>
+      </section>
+
+      <section class="progress-wrap">
+        <div class="progress-item"><strong>Chunk:</strong> <span id="chunkProgress">0 / 0</span></div>
+        <div class="progress-item"><strong>Sentence:</strong> <span id="sentenceProgress">0 / 0</span></div>
+        <div class="progress-item"><strong>Word:</strong> <span id="wordProgress">0 / 0</span></div>
+        <div class="bar"><div id="globalProgressBar"></div></div>
+      </section>
+
+      <main class="layout">
+        <aside id="pdfPanel">
+          <h2>PDF Preview</h2>
+          <div id="pdfPages"></div>
+          <div id="pdfNotices"></div>
+        </aside>
+
+        <section id="readingPane" aria-label="Extracted text reading pane"></section>
+      </main>
+    </div>
+
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

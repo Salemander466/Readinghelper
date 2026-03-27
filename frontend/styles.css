@@ -1,0 +1,145 @@
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --accent: #3b82f6;
+  --read: #9ca3af;
+  --current-word: #fde68a;
+  --current-sentence: #dbeafe;
+}
+
+body.dark {
+  --bg: #0f172a;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #60a5fa;
+  --read: #6b7280;
+  --current-word: #92400e;
+  --current-sentence: #1e3a8a;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+header h1 { margin: 0; font-size: 1.4rem; }
+#statusLabel { color: var(--muted); }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+button, .upload-btn {
+  border: 1px solid #d1d5db;
+  background: white;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+body.dark button, body.dark .upload-btn {
+  background: #1f2937;
+  border-color: #374151;
+  color: var(--text);
+}
+
+.upload-btn input { display: none; }
+
+.progress-wrap {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.progress-item { display: inline-block; margin-right: 1rem; }
+.bar {
+  height: 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+#globalProgressBar {
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.15s linear;
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 35% 65%;
+  min-height: 70vh;
+}
+
+#pdfPanel,
+#readingPane {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1rem;
+  overflow: auto;
+  max-height: 75vh;
+}
+
+.pdf-thumb {
+  margin-bottom: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.paragraph {
+  margin: 0 0 1rem;
+  line-height: 1.8;
+  font-size: 1.03rem;
+  border-left: 3px solid transparent;
+  padding-left: 0.55rem;
+}
+
+.sentence.current-sentence {
+  background: var(--current-sentence);
+  border-radius: 6px;
+}
+
+.word {
+  cursor: pointer;
+  padding: 0.05rem 0.08rem;
+  border-radius: 3px;
+}
+
+.word.read { color: var(--read); }
+.word.current-word { background: var(--current-word); }
+
+.notice {
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  #pdfPanel, #readingPane { max-height: 45vh; }
+}
