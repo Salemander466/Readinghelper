@@ -1,4 +1,5 @@
 import json
+import logging
 import uuid
 from pathlib import Path
 
@@ -18,6 +19,9 @@ from .models import (
     UploadedPdfResponse,
 )
 from .tts_client import TTSClientError, build_cache_key, synthesize_to_path
+
+
+logger = logging.getLogger('uvicorn.error')
 
 
 def _ensure_dirs() -> None:
@@ -60,6 +64,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> UploadedPdfResponse:
 
     content = await file.read()
     out_path.write_bytes(content)
+    logger.info('Uploaded PDF file_id=%s filename=%s size_bytes=%s', file_id, file.filename, len(content))
 
     return UploadedPdfResponse(
         file_id=file_id,
@@ -92,6 +97,14 @@ async def extract_text(payload: ExtractTextPayload) -> ExtractTextResponse:
 
     manifest_path = Path(settings.temp_dir) / f"{payload.file_id}_structure.json"
     manifest_path.write_text(json.dumps(payload.model_dump(), ensure_ascii=False, indent=2), encoding='utf-8')
+    logger.info(
+        'Extracted text file_id=%s pages=%s paragraphs=%s sentences=%s words=%s',
+        payload.file_id,
+        page_count,
+        paragraph_count,
+        sentence_count,
+        word_count,
+    )
 
     return ExtractTextResponse(
         file_id=payload.file_id,
@@ -114,15 +127,33 @@ async def tts_chunk(payload: TTSChunkRequest) -> TTSChunkResponse:
 
     key = build_cache_key(payload.text, clamped_speed, voice, fmt)
     audio_path = Path(settings.audio_cache_dir) / f'{key}.{fmt}'
+    logger.info(
+        'TTS chunk requested file_id=%s chunk_id=%s speed=%.2f voice=%s text_chars=%s',
+        payload.file_id,
+        payload.chunk_id,
+        clamped_speed,
+        voice,
+        len(payload.text),
+    )
 
     cached = audio_path.exists()
     if not cached:
         try:
             await synthesize_to_path(payload.text, clamped_speed, voice, audio_path)
         except TTSClientError as exc:
+            logger.exception('TTS synthesis failed chunk_id=%s', payload.chunk_id)
             raise HTTPException(status_code=502, detail=str(exc)) from exc
+    else:
+        logger.info('TTS chunk cache hit chunk_id=%s audio_path=%s', payload.chunk_id, audio_path.name)
 
     word_timings = get_word_timings(payload.text, audio_path)
+    logger.info(
+        'TTS chunk ready chunk_id=%s cached=%s audio_path=%s timings=%s',
+        payload.chunk_id,
+        cached,
+        audio_path.name,
+        len(word_timings or []),
+    )
     return TTSChunkResponse(
         chunk_id=payload.chunk_id,
         cached=cached,
@@ -138,4 +169,5 @@ async def get_audio(filename: str):
     path = Path(settings.audio_cache_dir) / filename
     if not path.exists():
         raise HTTPException(status_code=404, detail='Audio chunk not found.')
+    logger.info('Serving audio filename=%s', filename)
     return FileResponse(path)
