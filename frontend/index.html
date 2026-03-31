@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reading Helper - PDF Read Aloud</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Reading Helper</p>
+          <h1>Follow the narration directly on the PDF page.</h1>
+        </div>
+        <p id="statusLabel">Upload a PDF to begin.</p>
+      </header>
+
+      <main class="layout">
+        <aside class="sidebar">
+          <section class="panel controls-panel">
+            <div class="panel-heading">
+              <h2>Controls</h2>
+              <button id="darkModeBtn" class="ghost-btn">Theme</button>
+            </div>
+
+            <label class="upload-btn primary-btn">
+              Upload PDF
+              <input type="file" id="pdfInput" accept="application/pdf" />
+            </label>
+
+            <div class="control-grid">
+              <button id="playBtn">Play</button>
+              <button id="pauseBtn">Pause</button>
+              <button id="resumeBtn">Resume</button>
+              <button id="stopBtn">Stop</button>
+              <button id="prevSentenceBtn">Previous</button>
+              <button id="nextSentenceBtn">Next</button>
+            </div>
+
+            <label class="range-wrap">
+              <span>Speed</span>
+              <input id="speedRange" type="range" min="0.65" max="1.75" step="0.05" value="1.0" />
+              <strong id="speedValue">1.00x</strong>
+            </label>
+
+            <label class="toggle-row">
+              <input type="checkbox" id="wordHighlightToggle" checked />
+              <span>Show active word focus</span>
+            </label>
+
+            <button id="exportTextBtn" class="ghost-btn full-width">Export extracted text</button>
+          </section>
+
+          <section class="panel progress-panel">
+            <div class="panel-heading">
+              <h2>Progress</h2>
+            </div>
+            <div class="stats">
+              <div class="stat-card">
+                <span>Chunk</span>
+                <strong id="chunkProgress">0 / 0</strong>
+              </div>
+              <div class="stat-card">
+                <span>Sentence</span>
+                <strong id="sentenceProgress">0 / 0</strong>
+              </div>
+              <div class="stat-card">
+                <span>Word</span>
+                <strong id="wordProgress">0 / 0</strong>
+              </div>
+            </div>
+            <div class="bar"><div id="globalProgressBar"></div></div>
+          </section>
+
+          <section class="panel now-reading-panel">
+            <div class="panel-heading">
+              <h2>Now Reading</h2>
+            </div>
+            <p id="currentLocationLabel">Page -, sentence -</p>
+            <p id="currentSentenceText">The active sentence will appear here once playback begins.</p>
+          </section>
+
+          <section class="panel notices-panel">
+            <div class="panel-heading">
+              <h2>Document Notes</h2>
+            </div>
+            <div id="pdfNotices"></div>
+          </section>
+
+          <section class="panel debug-panel">
+            <div class="panel-heading">
+              <h2>Debug Log</h2>
+            </div>
+            <pre id="debugLog">Waiting for activity...</pre>
+          </section>
+        </aside>
+
+        <section class="reader-stage">
+          <div class="stage-header">
+            <div>
+              <p class="eyebrow">Document View</p>
+              <h2 id="documentTitle">PDF viewer</h2>
+            </div>
+            <p class="stage-hint">Click a highlighted word area to jump playback from that point.</p>
+          </div>
+
+          <div id="pdfPages" class="pdf-pages" aria-label="PDF document viewer"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>
